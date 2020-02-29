@@ -1,5 +1,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <string.h>
 #include <netdb.h>
 #include <iostream>
 #include <netinet/ip.h>
@@ -33,27 +34,6 @@ uint16_t checksum(void* vdata, size_t length) {
     // Return the checksum in network byte order.
     return htons(~acc);
 }
-
-struct icmphdr
-{
-  u_int8_t type;                /* message type */
-  u_int8_t code;                /* type sub-code */
-  u_int16_t checksum;
-  union
-  {
-    struct
-    {
-      u_int16_t        id;
-      u_int16_t        sequence;
-    } echo;                        /* echo datagram */
-    u_int32_t        gateway;        /* gateway address */
-    struct
-    {
-      u_int16_t        __unused;
-      u_int16_t        mtu;
-    } frag;                        /* path mtu discovery */
-  } un;
-};
 
 struct data_packet
 {
@@ -109,7 +89,7 @@ int main(int argc, char *argv[]) {
        )
     {
       std::cout << "Failed to recvpacket errno " << errno << std::endl;
-      std::cout << strerror(errno) << std::endl;
+      std::cout << hstrerror(errno) << std::endl;
     }
 
     std::cout << packet.msg << std::endl;
