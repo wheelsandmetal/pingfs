@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
       std::cout << hstrerror(errno) << std::endl;
     }
 
-    std::cout << packet.msg << std::endl;
+    std::cout.write(packet.msg, sizeof(packet.msg)) << std::endl;
   }
 
   return EXIT_SUCCESS;
