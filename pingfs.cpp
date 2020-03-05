@@ -9,6 +9,8 @@
 
 const int MAX_MESSAGE_SIZE = 64;
 
+using namespace std;
+
 uint16_t checksum(void* vdata, size_t length) {
     char* data=(char*)vdata;
     uint32_t acc=0xffff;
@@ -50,6 +52,7 @@ int main(int argc, char *argv[]) {
   addr_con.sin_family = host_entity->h_addrtype;
   addr_con.sin_port = htons (0);
   addr_con.sin_addr.s_addr = *(long*)host_entity->h_addr;
+  std::string message = argv[2];
 
   int sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
   if (sockfd < 0){
@@ -68,7 +71,7 @@ int main(int argc, char *argv[]) {
   struct data_packet packet;
   while (1) {
     bzero(&packet, sizeof(packet));
-    strcpy(packet.msg, "oh what a life");
+    strcpy(packet.msg, message.c_str());
     packet.hdr.type = ICMP_ECHO;
     packet.hdr.checksum = checksum(&packet, sizeof(packet));
     if ( 0 >= sendto(sockfd, &packet, sizeof(packet), 0,
@@ -94,7 +97,7 @@ int main(int argc, char *argv[]) {
       std::cout << hstrerror(errno) << std::endl;
     }
 
-    std::cout.write(packet.msg, sizeof(packet.msg)) << std::endl;
+    std::cout << std::string(packet.msg, MAX_MESSAGE_SIZE) << std::endl;
   }
 
   return EXIT_SUCCESS;
