@@ -7,6 +7,8 @@
 #include <netinet/ip_icmp.h>
 #include <unistd.h> 
 
+const int MAX_MESSAGE_SIZE = 64;
+
 uint16_t checksum(void* vdata, size_t length) {
     char* data=(char*)vdata;
     uint32_t acc=0xffff;
@@ -38,7 +40,7 @@ uint16_t checksum(void* vdata, size_t length) {
 struct data_packet
 {
   struct icmphdr hdr;
-  char msg[64];
+  char msg[MAX_MESSAGE_SIZE];
 };
 
 int main(int argc, char *argv[]) {
