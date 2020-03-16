@@ -11,6 +11,12 @@ const int MAX_MESSAGE_SIZE = 64;
 
 using namespace std;
 
+struct data_packet
+{
+  struct icmphdr hdr;
+  char msg[MAX_MESSAGE_SIZE];
+};
+
 uint16_t checksum(void* vdata, size_t length) {
     char* data=(char*)vdata;
     uint32_t acc=0xffff;
@@ -39,11 +45,6 @@ uint16_t checksum(void* vdata, size_t length) {
     return htons(~acc);
 }
 
-struct data_packet
-{
-  struct icmphdr hdr;
-  char msg[MAX_MESSAGE_SIZE];
-};
 
 int main(int argc, char *argv[]) {
 
