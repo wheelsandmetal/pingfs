@@ -45,6 +45,22 @@ uint16_t checksum(void* vdata, size_t length) {
     return htons(~acc);
 }
 
+int get_sock_fd() {
+  int sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+  if (sockfd < 0){
+    std::cout << "Failed to create Socket" << std::endl;
+    switch (errno) {
+      case 1: std::cout << "Permisssion Denined" << std::endl; break;
+      default: std::cout << hstrerror(errno) << std::endl;
+    }
+    throw std::exception();
+  }
+  int ttl = 64;
+  setsockopt(sockfd, SOL_SOCKET, IP_TTL, &ttl, sizeof(ttl));
+  struct timeval time_out = {0, 500};
+  setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&time_out, sizeof(time_out));
+  return sockfd;
+}
 
 int main(int argc, char *argv[]) {
 
@@ -55,19 +71,12 @@ int main(int argc, char *argv[]) {
   addr_con.sin_addr.s_addr = *(long*)host_entity->h_addr;
   std::string message = argv[2];
 
-  int sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
-  if (sockfd < 0){
-    std::cout << "Failed to create Socket" << std::endl;
-    switch (errno) {
-      case 1: std::cout << "Permisssion Denined" << std::endl; break;
-      default: std::cout << "Check '$man socket' for errno " << errno << std::endl;
-    }
+  int sockfd;
+  try {
+    sockfd = get_sock_fd();
+  } catch (std::exception) {
     return EXIT_FAILURE;
   }
-  int ttl = 64;
-  setsockopt(sockfd, SOL_SOCKET, IP_TTL, &ttl, sizeof(ttl));
-  struct timeval time_out = {0, 500};
-  setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&time_out, sizeof(time_out));
 
   struct data_packet packet;
   while (1) {
