@@ -1,3 +1,3 @@
 
 build: 
-	clang++ -std=c++17 pingfs.cpp -o pingfs
+	g++ -std=c++17 pingfs.cpp -o pingfs
