@@ -14,17 +14,23 @@
         gnumake
         gcc
       ];
-    in {
-      devShell = pkgs.mkShell {
-        buildInputs = buildInputs;
-      };
 
-      defaultPackage = with pkgs; stdenv.mkDerivation {
+      pingfs = with pkgs; stdenv.mkDerivation {
         name = "pingfs";
         src = self;
         buildInputs = buildInputs;
         buildPhase = "make build";
         installPhase = "mkdir -p $out/bin; install -t $out/bin pingfs";
+      };
+
+    in {
+      devShell = pkgs.mkShell {
+        buildInputs = buildInputs;
+      };
+
+      packages = {
+        pingfs = pingfs;
+        default = pingfs;
       };
     }
   );

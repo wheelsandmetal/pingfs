@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
     }
 
     bzero(&packet, sizeof(packet));
-    usleep(100000);
+    usleep(1000000);
 
     struct sockaddr_in r_addr; 
     unsigned int addr_len = sizeof(r_addr);
